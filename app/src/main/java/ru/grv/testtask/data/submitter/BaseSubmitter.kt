@@ -1,5 +1,6 @@
 package ru.grv.testtask.data.submitter
 
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
 import okhttp3.OkHttpClient
@@ -24,6 +25,7 @@ abstract class BaseSubmitter<T> {
     val retrofit: Retrofit = Retrofit.Builder()
         .client(httpClient.build())
         .baseUrl(Companion.URL)
+        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 

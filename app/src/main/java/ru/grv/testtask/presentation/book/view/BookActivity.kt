@@ -8,6 +8,8 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_book.*
+import kotlinx.android.synthetic.main.activity_book.toolbar
+import kotlinx.android.synthetic.main.activity_profile.*
 import ru.grv.testtask.Constants.BOOKS_KEY
 import ru.grv.testtask.R
 import ru.grv.testtask.domain.entity.BookEntity
@@ -15,7 +17,6 @@ import ru.grv.testtask.domain.entity.BookEntity
 class BookActivity: AppCompatActivity() {
 
     private lateinit var adapter: BookAdapter
-    private var toolbar: Toolbar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,10 +42,9 @@ class BookActivity: AppCompatActivity() {
     }
 
     private fun initToolbar() {
-        toolbar = findViewById<View>(R.id.toolbar) as Toolbar
-        toolbar?.setNavigationIcon(R.drawable.arrow_left)
-        toolbar?.title = this.getString(R.string.title_book_screen)
-        toolbar?.setNavigationOnClickListener { onBackPressed() }
+        (toolbar as Toolbar)?.setNavigationIcon(R.drawable.arrow_left)
+        (toolbar as Toolbar)?.title = this.getString(R.string.title_book_screen)
+        (toolbar as Toolbar)?.setNavigationOnClickListener { onBackPressed() }
     }
     //----------------------------------------------------------------------------------------------
     // endregion private

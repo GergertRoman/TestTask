@@ -53,7 +53,6 @@ View.OnClickListener {
 
     // region Fields
     //----------------------------------------------------------------------------------------------
-    private var toolbar: Toolbar? = null
     private var countReadBook = 0
 
     @Inject
@@ -148,8 +147,7 @@ View.OnClickListener {
     }
 
     private fun initToolbar() {
-        toolbar = findViewById<View>(R.id.toolbar) as Toolbar
-        toolbar?.title = this.getString(R.string.title_profile_screen)
+        (toolbar as Toolbar).title = this.getString(R.string.title_profile_screen)
     }
 
     private fun fetchDataFromDb() {
