@@ -14,7 +14,7 @@ import ru.grv.testtask.Constants.BOOKS_KEY
 import ru.grv.testtask.R
 import ru.grv.testtask.domain.entity.BookEntity
 
-class BookActivity: AppCompatActivity() {
+class BookView: AppCompatActivity() {
 
     private lateinit var adapter: BookAdapter
 
@@ -42,9 +42,9 @@ class BookActivity: AppCompatActivity() {
     }
 
     private fun initToolbar() {
-        (toolbar as Toolbar)?.setNavigationIcon(R.drawable.arrow_left)
-        (toolbar as Toolbar)?.title = this.getString(R.string.title_book_screen)
-        (toolbar as Toolbar)?.setNavigationOnClickListener { onBackPressed() }
+        (toolbar as Toolbar).setNavigationIcon(R.drawable.arrow_left)
+        (toolbar as Toolbar).title = this.getString(R.string.title_book_screen)
+        (toolbar as Toolbar).setNavigationOnClickListener { onBackPressed() }
     }
     //----------------------------------------------------------------------------------------------
     // endregion private

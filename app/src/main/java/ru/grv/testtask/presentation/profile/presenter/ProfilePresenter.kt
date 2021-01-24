@@ -14,28 +14,29 @@ import ru.grv.testtask.Constants.ERROR
 import ru.grv.testtask.Constants.INTERNAL_BACKEND_ERROR
 import ru.grv.testtask.Constants.PROFILE_TAG
 import ru.grv.testtask.Constants.TOKEN_EXPIRED
-import ru.grv.testtask.data.repository.InternalBackendException
-import ru.grv.testtask.data.repository.TokenExpiredException
+import ru.grv.testtask.data.exception.InternalBackendException
+import ru.grv.testtask.data.exception.TokenExpiredException
 import ru.grv.testtask.domain.entity.BookEntity
 import ru.grv.testtask.domain.entity.ProfileEntity
-import ru.grv.testtask.presentation.profile.view.IProfileActivity
+import ru.grv.testtask.presentation.profile.view.IProfileView
 import ru.grv.testtask.domain.interactor.IProfileInteractor
 import javax.inject.Inject
 
-class ProfilePresenter @Inject constructor(private val interactor: IProfileInteractor
+class ProfilePresenter @Inject constructor(
+    private val interactor: IProfileInteractor
 ): IProfilePresenter {
-    lateinit var activity: IProfileActivity
+    lateinit var viewState: IProfileView
     var bookList = arrayListOf<BookEntity>()
     var isShowAlertTokenExpired = true
     var isShowAlertInternalBackend = true
     private var dispose = CompositeDisposable()
 
-    override fun setView(activity: IProfileActivity) {
-        this.activity = activity
+    override fun setView(view: IProfileView) {
+        this.viewState = view
     }
 
     override fun chooseCountReadBook() {
-        activity.openActivityBook(bookList)
+        viewState.openActivityBook(bookList)
     }
 
 
@@ -58,7 +59,7 @@ class ProfilePresenter @Inject constructor(private val interactor: IProfileInter
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                activity.updateProfileInfo(it)
+                viewState.updateProfileInfo(it)
                 Log.d(DATA_BASE_TAG, "Rx: A profile of the received base")
             }, {
                 Log.d(DATA_BASE_TAG, "Rx: Read error profile")
@@ -72,7 +73,7 @@ class ProfilePresenter @Inject constructor(private val interactor: IProfileInter
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 this.bookList = it as ArrayList<BookEntity>
-                activity.showCountReadBook(it.size)
+                viewState.showCountReadBook(it.size)
                 Log.d(DATA_BASE_TAG, "Rx: A books of the received base")
             }, {
                 Log.d(DATA_BASE_TAG, "Rx: Read error books")
@@ -87,7 +88,7 @@ class ProfilePresenter @Inject constructor(private val interactor: IProfileInter
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                activity.updateProfileInfo(it)
+                viewState.updateProfileInfo(it)
                 writeProfileInfoInDb(it)
                 Log.d(PROFILE_TAG, "success")
             }, {
@@ -105,7 +106,7 @@ class ProfilePresenter @Inject constructor(private val interactor: IProfileInter
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 this.bookList = it as ArrayList<BookEntity>
-                activity.showCountReadBook(it.size)
+                viewState.showCountReadBook(it.size)
                 writeBooksListInDb(it)
                 Log.d(BOOK_TAG, "success")
             }, {
@@ -126,7 +127,7 @@ class ProfilePresenter @Inject constructor(private val interactor: IProfileInter
         when (e) {
             is TokenExpiredException -> {
                 if (isShowAlertTokenExpired) {
-                    activity.showErrorAlert(
+                    viewState.showErrorAlert(
                         ERROR,
                         TOKEN_EXPIRED
                     )
@@ -135,7 +136,7 @@ class ProfilePresenter @Inject constructor(private val interactor: IProfileInter
             }
             is InternalBackendException -> {
                 if (isShowAlertInternalBackend) {
-                    activity.showErrorAlert(
+                    viewState.showErrorAlert(
                         ERROR,
                         INTERNAL_BACKEND_ERROR
                     )
@@ -143,7 +144,7 @@ class ProfilePresenter @Inject constructor(private val interactor: IProfileInter
                 }
             }
             else -> {
-                activity.showErrorAlert(ERROR, DATA_NOT_FOUND)
+                viewState.showErrorAlert(ERROR, DATA_NOT_FOUND)
             }
         }
     }

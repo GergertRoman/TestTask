@@ -7,6 +7,7 @@ import ru.grv.testtask.data.db.TestTaskDatabase
 import ru.grv.testtask.data.response.book.BooksResponse
 import ru.grv.testtask.data.storage.BookStorage
 import ru.grv.testtask.domain.entity.BookEntity
+import ru.grv.testtask.domain.repository.IBookRepository
 import javax.inject.Inject
 
 class BookRepository@Inject constructor(
@@ -40,7 +41,7 @@ class BookRepository@Inject constructor(
 
         for (book in booksResponse?.books!!) {
             authorsName = ""
-            var authorsText = if (book.authors.size > 1) {
+            val authorsText = if (book.authors.size > 1) {
                 context.getText(R.string.authors)
             } else {
                 context.getText(R.string.author)

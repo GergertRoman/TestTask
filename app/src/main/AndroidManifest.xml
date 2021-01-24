@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".presentation.book.view.BookActivity">
+            android:name=".presentation.book.view.BookView">
         </activity>
         <activity android:name=".presentation.profile.view.ProfileActivity">
             <intent-filter>

@@ -16,7 +16,7 @@ import ru.grv.testtask.R
 import ru.grv.testtask.di.DaggerWrapper
 import ru.grv.testtask.domain.entity.BookEntity
 import ru.grv.testtask.domain.entity.ProfileEntity
-import ru.grv.testtask.presentation.book.view.BookActivity
+import ru.grv.testtask.presentation.book.view.BookView
 import ru.grv.testtask.presentation.profile.presenter.IProfilePresenter
 import java.text.SimpleDateFormat
 import java.util.*
@@ -45,7 +45,7 @@ const val BACKEND_ERROR_TOKEN = "LbwCgZvvlFO2ydRK5BAfau2elUYnauNT"
 
 const val TOKEN = BOOKS_PROFILE_TOKEN
 
-class ProfileActivity: AppCompatActivity(), IProfileActivity, SwipeRefreshLayout.OnRefreshListener,
+class ProfileActivity: AppCompatActivity(), IProfileView, SwipeRefreshLayout.OnRefreshListener,
 View.OnClickListener {
 
     private val layout = R.layout.activity_profile
@@ -117,7 +117,7 @@ View.OnClickListener {
 
     override fun openActivityBook(bookList: ArrayList<BookEntity>) {
         val context = applicationContext
-        val intent = Intent(context, BookActivity::class.java)
+        val intent = Intent(context, BookView::class.java)
         intent.putExtra(BOOKS_KEY, bookList)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         context.startActivity(intent)

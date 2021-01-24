@@ -1,4 +1,4 @@
-package ru.grv.testtask.data.repository
+package ru.grv.testtask.domain.repository
 
 import io.reactivex.Observable
 import ru.grv.testtask.domain.entity.BookEntity

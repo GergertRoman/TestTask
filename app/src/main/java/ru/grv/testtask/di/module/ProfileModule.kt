@@ -3,12 +3,12 @@ package ru.grv.testtask.di.module
 import dagger.Binds
 import dagger.Module
 import ru.grv.testtask.data.repository.BookRepository
-import ru.grv.testtask.data.repository.IBookRepository
+import ru.grv.testtask.domain.repository.IBookRepository
 import ru.grv.testtask.domain.interactor.IProfileInteractor
 import ru.grv.testtask.presentation.profile.presenter.IProfilePresenter
 import ru.grv.testtask.domain.interactor.ProfileInteractor
 import ru.grv.testtask.presentation.profile.presenter.ProfilePresenter
-import ru.grv.testtask.data.repository.IProfileRepository
+import ru.grv.testtask.domain.repository.IProfileRepository
 import ru.grv.testtask.data.repository.ProfileRepository
 
 @Module

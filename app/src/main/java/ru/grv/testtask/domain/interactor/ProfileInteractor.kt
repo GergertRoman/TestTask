@@ -1,10 +1,10 @@
 package ru.grv.testtask.domain.interactor
 
 import io.reactivex.Observable
-import ru.grv.testtask.data.repository.IBookRepository
+import ru.grv.testtask.domain.repository.IBookRepository
 import ru.grv.testtask.domain.entity.BookEntity
 import ru.grv.testtask.domain.entity.ProfileEntity
-import ru.grv.testtask.data.repository.IProfileRepository
+import ru.grv.testtask.domain.repository.IProfileRepository
 import javax.inject.Inject
 
 class ProfileInteractor @Inject constructor(
