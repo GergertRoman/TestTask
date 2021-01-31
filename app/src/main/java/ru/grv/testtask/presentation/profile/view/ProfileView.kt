@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.facebook.stetho.Stetho
-import kotlinx.android.synthetic.main.activity_profile.*
+import kotlinx.android.synthetic.main.controller_profile.*
 import ru.grv.testtask.Constants.BOOKS_KEY
 import ru.grv.testtask.R
 import ru.grv.testtask.di.DaggerWrapper
@@ -45,10 +45,11 @@ const val BACKEND_ERROR_TOKEN = "LbwCgZvvlFO2ydRK5BAfau2elUYnauNT"
 
 const val TOKEN = BOOKS_PROFILE_TOKEN
 
-class ProfileActivity: AppCompatActivity(), IProfileView, SwipeRefreshLayout.OnRefreshListener,
+/*
+class ProfileActivity: AppCompatActivity(), IProfileController, SwipeRefreshLayout.OnRefreshListener,
 View.OnClickListener {
 
-    private val layout = R.layout.activity_profile
+    private val layout = R.layout.controller_profile
 
 
     // region Fields
@@ -69,7 +70,7 @@ View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(layout)
-        initializeInjector()
+        //initializeInjector()
         initializerStetho()
         configureView()
         initToolbar()
@@ -88,9 +89,11 @@ View.OnClickListener {
         DaggerWrapper.getComponentManager(applicationContext)?.clearProfileComponent()
     }
 
-    private fun initializeInjector() {
+    */
+/*private fun initializeInjector() {
         DaggerWrapper.getComponentManager(applicationContext)?.getProfileComponent()?.inject(this)
-    }
+    }*//*
+
     //----------------------------------------------------------------------------------------------
     // endregion Dadder
 
@@ -150,10 +153,12 @@ View.OnClickListener {
         (toolbar as Toolbar).title = this.getString(R.string.title_profile_screen)
     }
 
-    private fun fetchDataFromDb() {
+    */
+/*private fun fetchDataFromDb() {
         presenter.fetchProfileInfoFromDb()
         presenter.fetchBooksFromDb()
-    }
+    }*//*
+
 
     private fun initializerStetho() {
         // Create an InitializerBuilder
@@ -187,13 +192,9 @@ View.OnClickListener {
 
 
     override fun onRefresh() {
-        if (isNetworkAvailable(applicationContext)) {
-            swipeContainer?.isRefreshing = true
-            presenter.loadBooks()
-            presenter.loadProfileInfo()
-        } else {
-            fetchDataFromDb()
-        }
+        swipeContainer?.isRefreshing = true
+        presenter.loadBooks()
+        presenter.loadProfileInfo()
     }
 
     override fun onClick(v: View?) {
@@ -207,4 +208,4 @@ View.OnClickListener {
             }
         }
     }
-}
+}*/

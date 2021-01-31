@@ -1,7 +1,7 @@
 package ru.grv.testtask.data.repository
 
 import android.content.Context
-import io.reactivex.Observable
+import io.reactivex.Single
 import ru.grv.testtask.R
 import ru.grv.testtask.data.db.TestTaskDatabase
 import ru.grv.testtask.data.response.profile.ProfileResponse
@@ -20,23 +20,23 @@ class ProfileRepository
     private val context: Context
 ) : IProfileRepository, BaseRepository(){
 
-    override fun getProfileInfo(): Observable<ProfileEntity> {
-        return storage
-            .fetchProfileInfo()
-            .map {
-                if (it.data == null) {
-                    definitionError(it.reason)
+    override fun getProfileInfo(): Single<ProfileEntity> {
+        return if (isNetworkAvailable(context)) {
+            storage
+                .fetchProfileInfo()
+                .map {
+                    if (it.data == null) {
+                        definitionError(it.reason)
+                    }
+                    extractProfileInfoFromResponse(it)
                 }
-                extractProfileInfoFromResponse(it)
-            }
+        } else {
+            db.profileDao().getProfile()
+        }
     }
 
     override fun writeProfileInfoInDb(entity: ProfileEntity?) {
         db.profileDao().insertProfile(entity)
-    }
-
-    override fun fetchProfileInfoFromDb(): Observable<ProfileEntity> {
-        return db.profileDao().getProfile()
     }
 
     private fun extractProfileInfoFromResponse(response: ProfileResponse): ProfileEntity {
@@ -55,10 +55,9 @@ class ProfileRepository
 
     private fun getNewFormatDate(date: String): String {
         val sServerShortFormat = SimpleDateFormat(DATE_FORMAT_SHORT_SERVER, Locale.US)
-        var serverShortFormat = sServerShortFormat
-        serverShortFormat.timeZone = TimeZone.getTimeZone("Europe/Moscow")
-        val dateStrWithTimeZone = serverShortFormat.parse(date)
-        var timeDate = dateStrWithTimeZone.time
+        sServerShortFormat.timeZone = TimeZone.getTimeZone("Europe/Moscow")
+        val dateStrWithTimeZone = sServerShortFormat.parse(date)
+        val timeDate = dateStrWithTimeZone.time
         val timelineDateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
         return timelineDateFormat.format(Date(timeDate))+"г."
     }

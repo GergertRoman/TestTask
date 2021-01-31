@@ -8,6 +8,7 @@ import android.view.Gravity
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 
 class AlertFunctions(
         private val activity: Activity,
@@ -33,7 +34,6 @@ class AlertFunctions(
         )
         alertDialog.setMessage(message)
             .setTitle(title)
-                //.setCancelable(false)
         when (buttonsType) {
             BUTTONS.OK -> {
                 if (okButtonResId != null) {
@@ -65,7 +65,7 @@ class AlertFunctions(
             titleOfDialog.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f)
             titleOfDialog.gravity = Gravity.START;
             titleOfDialog.setPadding(0, 0, 50, 0)
-            activity.resources?.getColor(R.color.prime_black)?.let { titleOfDialog.setTextColor(it) }
+            titleOfDialog.setTextColor(ContextCompat.getColor(activity, R.color.prime_black))
             titleOfDialog.typeface = faceTitle
             alert.setCustomTitle(titleOfDialog)
         }
@@ -78,14 +78,14 @@ class AlertFunctions(
         val buttonPositive = alert.findViewById<View>(android.R.id.button1) as Button
         buttonPositive.apply {
             textSize = 14f
-            setTextColor(resources.getColor(R.color.prime_black))
+            setTextColor(ContextCompat.getColor(context, R.color.prime_black))
             typeface = faceButton
         }
 
         val buttonNegative = alert.findViewById<View>(android.R.id.button2) as Button
         buttonNegative.apply {
             textSize = 14f
-            setTextColor(resources.getColor(R.color.prime_black))
+            setTextColor(ContextCompat.getColor(context, R.color.prime_black))
             typeface = faceButton
         }
 
@@ -96,7 +96,7 @@ class AlertFunctions(
             message.apply {
                 textSize = 16f
                 setPadding(0, 40, 50, 60)
-                setTextColor(resources.getColor(R.color.text_secondary))
+                setTextColor(ContextCompat.getColor(context, R.color.text_secondary))
                 typeface = faceMessage
             }
         } else {

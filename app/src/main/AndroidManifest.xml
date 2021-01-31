@@ -13,7 +13,8 @@
         <activity
             android:name=".presentation.book.view.BookView">
         </activity>
-        <activity android:name=".presentation.profile.view.ProfileActivity">
+        <activity android:name=".presentation.BaseActivity"
+            android:configChanges="orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

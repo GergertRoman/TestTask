@@ -2,6 +2,9 @@ package ru.grv.testtask.data.repository
 
 import android.content.Context
 import io.reactivex.Observable
+import io.reactivex.Maybe
+import io.reactivex.Single
+import ru.grv.testtask.Constants
 import ru.grv.testtask.R
 import ru.grv.testtask.data.db.TestTaskDatabase
 import ru.grv.testtask.data.response.book.BooksResponse
@@ -15,24 +18,33 @@ class BookRepository@Inject constructor(
     private val db: TestTaskDatabase,
     private val context: Context
 ) : IBookRepository, BaseRepository() {
-    override fun getBooks(): Observable<List<BookEntity>> {
-        return storage
-            .fetchBooks()
-            .map {
-                if (it.data == null) {
-                    definitionError(it.reason)
-                }
-                extractBooksFromResponse(it)
+    override fun getBooks(): Single<List<BookEntity>> {
+        var books = db.bookDao().getAllBooks()
+        /*if (books.blockingGet() == null) {
+            if (isNetworkAvailable(context)) {
+                books = storage
+                    .fetchBooks()
+                    .map {
+                        if (it.data == null) {
+                            definitionError(it.reason)
+                        }
+                        extractBooksFromResponse(it)
+                    }
+                db.bookDao().insertList(books.blockingGet())
+            } else {
+                definitionError(Constants.NETWORK_UNAVAILABLE_ERROR_TYPE)
             }
+        }*/
+        return books
     }
 
-    override fun writeBooksListInDb(entityList: List<BookEntity?>) {
+    /*override fun writeBooksListInDb(entityList: List<BookEntity?>) {
         db.bookDao().insertList(entityList)
-    }
+    }*/
 
-    override fun fetchBooksFromDb(): Observable<List<BookEntity>> {
+    /*override fun fetchBooksFromDb(): Observable<List<BookEntity>> {
         return db.bookDao().getAllBooks()
-    }
+    }*/
 
     private fun extractBooksFromResponse(response: BooksResponse): ArrayList<BookEntity> {
         val booksList = arrayListOf<BookEntity>()

@@ -7,41 +7,38 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import moxy.InjectViewState
+import moxy.MvpPresenter
 import ru.grv.testtask.Constants.BOOK_TAG
 import ru.grv.testtask.Constants.DATA_BASE_TAG
 import ru.grv.testtask.Constants.DATA_NOT_FOUND
 import ru.grv.testtask.Constants.ERROR
 import ru.grv.testtask.Constants.INTERNAL_BACKEND_ERROR
+import ru.grv.testtask.Constants.NETWORK_UNAVAILABLE_ERROR
 import ru.grv.testtask.Constants.PROFILE_TAG
 import ru.grv.testtask.Constants.TOKEN_EXPIRED
 import ru.grv.testtask.data.exception.InternalBackendException
+import ru.grv.testtask.data.exception.NetworkUnavailableException
 import ru.grv.testtask.data.exception.TokenExpiredException
 import ru.grv.testtask.domain.entity.BookEntity
 import ru.grv.testtask.domain.entity.ProfileEntity
-import ru.grv.testtask.presentation.profile.view.IProfileView
+import ru.grv.testtask.presentation.profile.view.IProfileController
 import ru.grv.testtask.domain.interactor.IProfileInteractor
 import javax.inject.Inject
 
+@InjectViewState
 class ProfilePresenter @Inject constructor(
     private val interactor: IProfileInteractor
-): IProfilePresenter {
-    lateinit var viewState: IProfileView
+): MvpPresenter<IProfileController>(), IProfilePresenter {
     var bookList = arrayListOf<BookEntity>()
     var isShowAlertTokenExpired = true
     var isShowAlertInternalBackend = true
     private var dispose = CompositeDisposable()
 
-    override fun setView(view: IProfileView) {
-        this.viewState = view
-    }
-
     override fun chooseCountReadBook() {
         viewState.openActivityBook(bookList)
     }
 
-
-    // region Rx
-    //----------------------------------------------------------------------------------------------
     private fun writeProfileInfoInDb(entity: ProfileEntity?) {
         CoroutineScope(Dispatchers.IO).launch {
             interactor.writeProfileInfoInDb(entity)
@@ -54,62 +51,42 @@ class ProfilePresenter @Inject constructor(
         }
     }
 
-    override fun fetchProfileInfoFromDb() {
-        dispose.add(interactor.fetchProfileInfoFromDb()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                viewState.updateProfileInfo(it)
-                Log.d(DATA_BASE_TAG, "Rx: A profile of the received base")
-            }, {
-                Log.d(DATA_BASE_TAG, "Rx: Read error profile")
-            })
-        )
-    }
-
-    override fun fetchBooksFromDb() {
-        dispose.add(interactor.fetchBooksFromDb()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                this.bookList = it as ArrayList<BookEntity>
-                viewState.showCountReadBook(it.size)
-                Log.d(DATA_BASE_TAG, "Rx: A books of the received base")
-            }, {
-                Log.d(DATA_BASE_TAG, "Rx: Read error books")
-            })
-        )
-    }
-
-    override fun loadProfileInfo() {
+    // region Rx
+    //----------------------------------------------------------------------------------------------
+    override fun getProfileInfo() {
         isShowAlertTokenExpired = true
         isShowAlertInternalBackend = true
         dispose.add(interactor.getProfileInfo()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
+                viewState.setProgressBarVisibility(false)
                 viewState.updateProfileInfo(it)
                 writeProfileInfoInDb(it)
+                //getBooks()
                 Log.d(PROFILE_TAG, "success")
             }, {
+                viewState.setProgressBarVisibility(false)
                 handlingCommonErrors(it)
                 Log.d(PROFILE_TAG, "Error ⭕️")
             })
         )
     }
 
-    override fun loadBooks() {
+    override fun getBooks() {
         isShowAlertTokenExpired = true
         isShowAlertInternalBackend = true
         dispose.add(interactor.getBooks()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
+                viewState.setProgressBarVisibility(false)
                 this.bookList = it as ArrayList<BookEntity>
                 viewState.showCountReadBook(it.size)
-                writeBooksListInDb(it)
+                //writeBooksListInDb(it)
                 Log.d(BOOK_TAG, "success")
             }, {
+                viewState.setProgressBarVisibility(false)
                 handlingCommonErrors(it)
                 Log.d(BOOK_TAG, "Error ⭕️")
             })
@@ -142,6 +119,12 @@ class ProfilePresenter @Inject constructor(
                     )
                     isShowAlertInternalBackend = false
                 }
+            }
+            is NetworkUnavailableException -> {
+                viewState.showErrorAlert(
+                    ERROR,
+                    NETWORK_UNAVAILABLE_ERROR
+                )
             }
             else -> {
                 viewState.showErrorAlert(ERROR, DATA_NOT_FOUND)

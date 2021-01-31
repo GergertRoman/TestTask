@@ -2,7 +2,6 @@ package ru.grv.testtask.data.db
 
 import android.content.Context
 import androidx.room.*
-import com.google.gson.Gson
 import ru.grv.testtask.data.db.unitlocalized.BookDao
 import ru.grv.testtask.data.db.unitlocalized.ProfileDao
 import ru.grv.testtask.domain.entity.BookEntity

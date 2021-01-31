@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_book.*
 import kotlinx.android.synthetic.main.activity_book.toolbar
-import kotlinx.android.synthetic.main.activity_profile.*
 import ru.grv.testtask.Constants.BOOKS_KEY
 import ru.grv.testtask.R
 import ru.grv.testtask.domain.entity.BookEntity
