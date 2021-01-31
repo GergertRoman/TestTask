@@ -18,33 +18,29 @@ class BookRepository@Inject constructor(
     private val db: TestTaskDatabase,
     private val context: Context
 ) : IBookRepository, BaseRepository() {
-    override fun getBooks(): Single<List<BookEntity>> {
-        var books = db.bookDao().getAllBooks()
-        /*if (books.blockingGet() == null) {
-            if (isNetworkAvailable(context)) {
-                books = storage
-                    .fetchBooks()
-                    .map {
-                        if (it.data == null) {
-                            definitionError(it.reason)
-                        }
-                        extractBooksFromResponse(it)
-                    }
-                db.bookDao().insertList(books.blockingGet())
-            } else {
-                definitionError(Constants.NETWORK_UNAVAILABLE_ERROR_TYPE)
-            }
-        }*/
-        return books
+
+    override fun getBooks(): Maybe<List<BookEntity>> {
+        return db.bookDao().getAllBooks()
     }
 
-    /*override fun writeBooksListInDb(entityList: List<BookEntity?>) {
-        db.bookDao().insertList(entityList)
-    }*/
+    override fun fetchBooks(): Single<ArrayList<BookEntity>> {
+        if (!isNetworkAvailable(context)) {
+            definitionError(Constants.NETWORK_UNAVAILABLE_ERROR_TYPE)
+        }
+        return storage
+            .fetchBooks()
+            .map {
+                if (it.data == null) {
+                    definitionError(it.reason)
+                }
+                extractBooksFromResponse(it)
+            }
+    }
 
-    /*override fun fetchBooksFromDb(): Observable<List<BookEntity>> {
-        return db.bookDao().getAllBooks()
-    }*/
+    override fun writeBooksListInDb(entityList: List<BookEntity?>) {
+        db.bookDao().deleteAllBooks()
+        db.bookDao().insertList(entityList)
+    }
 
     private fun extractBooksFromResponse(response: BooksResponse): ArrayList<BookEntity> {
         val booksList = arrayListOf<BookEntity>()

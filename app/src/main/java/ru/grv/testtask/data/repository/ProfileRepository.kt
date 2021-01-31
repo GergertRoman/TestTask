@@ -1,9 +1,13 @@
 package ru.grv.testtask.data.repository
 
+import android.accounts.NetworkErrorException
 import android.content.Context
+import io.reactivex.Maybe
 import io.reactivex.Single
+import ru.grv.testtask.Constants
 import ru.grv.testtask.R
 import ru.grv.testtask.data.db.TestTaskDatabase
+import ru.grv.testtask.data.exception.NetworkUnavailableException
 import ru.grv.testtask.data.response.profile.ProfileResponse
 import ru.grv.testtask.domain.entity.*
 import ru.grv.testtask.data.storage.ProfileStorage
@@ -20,22 +24,27 @@ class ProfileRepository
     private val context: Context
 ) : IProfileRepository, BaseRepository(){
 
-    override fun getProfileInfo(): Single<ProfileEntity> {
-        return if (isNetworkAvailable(context)) {
-            storage
-                .fetchProfileInfo()
-                .map {
-                    if (it.data == null) {
-                        definitionError(it.reason)
-                    }
-                    extractProfileInfoFromResponse(it)
-                }
-        } else {
-            db.profileDao().getProfile()
-        }
+    override fun getProfileInfo(): Maybe<ProfileEntity> {
+        return db.profileDao().getProfile()
     }
 
-    override fun writeProfileInfoInDb(entity: ProfileEntity?) {
+    override fun fetchProfileInfo(): Single<ProfileEntity> {
+        if (!isNetworkAvailable(context)) {
+            definitionError(Constants.NETWORK_UNAVAILABLE_ERROR_TYPE)
+        }
+        return storage
+            .fetchProfileInfo()
+            .map {
+                if (it.data == null) {
+                    definitionError(it.reason)
+                }
+                extractProfileInfoFromResponse(it)
+            }
+    }
+
+
+    override fun writeProfileInfoInDb(entity: ProfileEntity) {
+        db.profileDao().deleteProfile()
         db.profileDao().insertProfile(entity)
     }
 

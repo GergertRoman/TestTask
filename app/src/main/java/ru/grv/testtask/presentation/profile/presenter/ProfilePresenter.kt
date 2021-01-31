@@ -30,6 +30,7 @@ import javax.inject.Inject
 class ProfilePresenter @Inject constructor(
     private val interactor: IProfileInteractor
 ): MvpPresenter<IProfileController>(), IProfilePresenter {
+
     var bookList = arrayListOf<BookEntity>()
     var isShowAlertTokenExpired = true
     var isShowAlertInternalBackend = true
@@ -39,17 +40,6 @@ class ProfilePresenter @Inject constructor(
         viewState.openActivityBook(bookList)
     }
 
-    private fun writeProfileInfoInDb(entity: ProfileEntity?) {
-        CoroutineScope(Dispatchers.IO).launch {
-            interactor.writeProfileInfoInDb(entity)
-        }
-    }
-
-    private fun writeBooksListInDb(entityList: List<BookEntity>) {
-        CoroutineScope(Dispatchers.IO).launch {
-            interactor.writeBooksListInDb(entityList)
-        }
-    }
 
     // region Rx
     //----------------------------------------------------------------------------------------------
@@ -60,10 +50,8 @@ class ProfilePresenter @Inject constructor(
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                viewState.setProgressBarVisibility(false)
                 viewState.updateProfileInfo(it)
-                writeProfileInfoInDb(it)
-                //getBooks()
+                getBooks()
                 Log.d(PROFILE_TAG, "success")
             }, {
                 viewState.setProgressBarVisibility(false)
@@ -83,7 +71,6 @@ class ProfilePresenter @Inject constructor(
                 viewState.setProgressBarVisibility(false)
                 this.bookList = it as ArrayList<BookEntity>
                 viewState.showCountReadBook(it.size)
-                //writeBooksListInDb(it)
                 Log.d(BOOK_TAG, "success")
             }, {
                 viewState.setProgressBarVisibility(false)

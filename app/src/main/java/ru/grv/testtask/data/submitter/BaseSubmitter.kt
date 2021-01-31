@@ -10,8 +10,6 @@ import java.lang.Exception
 import java.util.concurrent.TimeUnit
 
 abstract class BaseSubmitter<T> {
-    val observable: Observable<T> = initObservable()
-    val maybe: Maybe<T> = initMaybe()
     val single: Single<T> = initSingle()
 
     // Code
@@ -29,46 +27,6 @@ abstract class BaseSubmitter<T> {
         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         .addConverterFactory(GsonConverterFactory.create())
         .build()
-
-    private fun initObservable(): Observable<T> {
-        return Observable.create<T> { e: ObservableEmitter<T> ->
-            run {
-                try {
-                    if (e.isDisposed)
-                        return@run
-                    val response: T? = submit()
-                    if (response != null) {
-                        e.onNext(response)
-                        e.onComplete()
-                    } else {
-                        throw Exception()
-                    }
-                } catch (t: Throwable) {
-
-                }
-            }
-        }
-    }
-
-    private fun initMaybe(): Maybe<T> {
-        return Maybe.create<T> { e: MaybeEmitter<T> ->
-            run {
-                try {
-                    if (e.isDisposed)
-                        return@run
-                    val response: T? = submit()
-                    if (response != null) {
-                        e.onSuccess(response)
-                        e.onComplete()
-                    } else {
-                        throw Exception()
-                    }
-                } catch (t: Throwable) {
-
-                }
-            }
-        }
-    }
 
     private fun initSingle(): Single<T> {
         return Single.create<T> { e: SingleEmitter<T> ->
