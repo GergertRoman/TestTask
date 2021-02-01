@@ -1,4 +1,4 @@
-package ru.grv.testtask.presentation.profile
+package ru.grv.testtask.common.mvp
 
 import android.app.Application
 import android.content.Context
@@ -7,43 +7,54 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.appcompat.widget.Toolbar
 import kotlinx.android.synthetic.main.base_controller.view.*
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.ControllerChangeHandler
 import com.bluelinelabs.conductor.ControllerChangeType
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
-import moxy.MvpDelegate
 import ru.grv.testtask.R
+import ru.grv.testtask.common.ToolbarManager
 import ru.grv.testtask.di.DaggerWrapper
 
-abstract class BaseController: Controller(), /*OnLocker,*/ View.OnClickListener {
+abstract class BaseController: Controller, View.OnClickListener {
 
     enum class STATE {
         DEFAULT,
         LOADING
     }
 
-    open val mvpDelegate: MvpDelegate<out BaseController> by lazy {
-        MvpDelegate<BaseController>(this)
-    }
+    constructor() : super()
+    constructor(args: Bundle?) : super(args)
 
+    // Abstract
     protected abstract fun getLayoutId(): Int
+    protected abstract fun getTitle(): String?
+    protected abstract fun getIconType(): ToolbarManager.IconType
+
     protected abstract fun initializeInjector()
     protected abstract fun clearInjector()
     protected abstract fun onCreated()
+    protected abstract fun initState(): STATE
 
     // Views
     private var baseLifecycleListener: LifecycleListener? = null
     protected var contentLoadingView: View? = null
     protected var contentContainerView: FrameLayout? = null
+    protected var toolbarManager: ToolbarManager? = null
+    private var toolbar: Toolbar? = null
 
     init {
         baseLifecycleListener = object : LifecycleListener() {
             override fun postCreateView(controller: Controller, view: View) {
                 onViewBound()
             }
-            override fun onChangeStart(controller: Controller, changeHandler: ControllerChangeHandler, changeType: ControllerChangeType) {
+            override fun onChangeStart(
+                controller: Controller,
+                changeHandler: ControllerChangeHandler,
+                changeType: ControllerChangeType
+            ) {
                 super.onChangeStart(controller, changeHandler, changeType)
 
                 if (changeType == ControllerChangeType.POP_ENTER) {
@@ -57,14 +68,20 @@ abstract class BaseController: Controller(), /*OnLocker,*/ View.OnClickListener 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
         val rootView = inflater.inflate(R.layout.base_controller, container, false)
-        contentContainerView = rootView.findViewById(R.id.contentContainer)
         contentLoadingView = rootView.findViewById(R.id.contentLoading)
-
         contentLoadingView?.setOnClickListener(this)
 
+        contentContainerView = rootView.findViewById(R.id.contentContainer)
         contentContainerView?.removeAllViews()
         contentContainerView?.addView(inflater.inflate(getLayoutId(), null))
-        mvpDelegate.onCreate(args)
+
+        toolbar = rootView.findViewById(R.id.toolbar)
+        if (toolbar != null) {
+            toolbarManager = ToolbarManager(this, toolbar!!, getTitle(), getIconType())
+        }
+
+        setState(initState())
+
         return rootView
     }
 
@@ -76,33 +93,8 @@ abstract class BaseController: Controller(), /*OnLocker,*/ View.OnClickListener 
 
     }
 
-    override fun onAttach(view: View) {
-        super.onAttach(view)
-
-        mvpDelegate.onAttach()
-    }
-
-    override fun onDetach(view: View) {
-        super.onDetach(view)
-
-        mvpDelegate.onDetach()
-    }
-
-    override fun onDestroyView(view: View) {
-        super.onDestroyView(view)
-
-        mvpDelegate.onDestroyView()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-
-        mvpDelegate.onSaveInstanceState(outState)
-    }
-
     override fun onDestroy() {
         super.onDestroy()
-        mvpDelegate.onDestroy()
         clearInjector()
     }
 
@@ -111,7 +103,8 @@ abstract class BaseController: Controller(), /*OnLocker,*/ View.OnClickListener 
         initializeInjector()
     }
 
-    protected fun getComponentManager() = DaggerWrapper.getComponentManager(applicationContext as Application)
+    protected fun getComponentManager() =
+        DaggerWrapper.getComponentManager(applicationContext as Application)
 
     protected fun setState(state: STATE) {
         when (state) {
@@ -130,6 +123,10 @@ abstract class BaseController: Controller(), /*OnLocker,*/ View.OnClickListener 
         when (view?.id) {
             R.id.contentLoading -> {}
         }
+    }
+
+    fun close() {
+        activity?.onBackPressed()
     }
 
     fun pushController(

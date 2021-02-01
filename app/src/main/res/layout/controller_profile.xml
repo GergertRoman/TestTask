@@ -29,7 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <ru.grv.testtask.view.CustomItemView
+            <ru.grv.testtask.common.view.CustomItemView
                 android:id="@+id/name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -39,7 +39,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>
 
-            <ru.grv.testtask.view.CustomItemView
+            <ru.grv.testtask.common.view.CustomItemView
                 android:id="@+id/surname"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -49,7 +49,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/name"/>
 
-            <ru.grv.testtask.view.CustomItemView
+            <ru.grv.testtask.common.view.CustomItemView
                 android:id="@+id/dateOfBirth"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -59,7 +59,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/surname"/>
 
-            <ru.grv.testtask.view.CustomItemView
+            <ru.grv.testtask.common.view.CustomItemView
                 android:id="@+id/city"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -69,7 +69,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/dateOfBirth"/>
 
-            <ru.grv.testtask.view.CustomItemView
+            <ru.grv.testtask.common.view.CustomItemView
                 android:id="@+id/gender"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -79,7 +79,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/city"/>
 
-            <ru.grv.testtask.view.CustomItemView
+            <ru.grv.testtask.common.view.CustomItemView
                 android:id="@+id/email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -89,7 +89,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/gender"/>
 
-            <ru.grv.testtask.view.CustomItemView
+            <ru.grv.testtask.common.view.CustomItemView
                 android:id="@+id/phone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -99,7 +99,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/email"/>
 
-            <ru.grv.testtask.view.CustomItemView
+            <ru.grv.testtask.common.view.CustomItemView
                 android:id="@+id/countOfBooksRead"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

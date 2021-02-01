@@ -1,33 +1,38 @@
-package ru.grv.testtask.presentation
+package ru.grv.testtask.presentation.profile.view
 
-import android.content.Intent
+import android.os.Bundle
 import android.view.View
-import androidx.appcompat.widget.Toolbar
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import kotlinx.android.synthetic.main.controller_profile.view.*
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
-import ru.grv.testtask.Constants
+import ru.grv.testtask.data.Constants
+import ru.grv.testtask.data.Constants.BOOKS_PROFILE_TOKEN
+import ru.grv.testtask.data.Constants.DEFAULT_STRING
 import ru.grv.testtask.R
+import ru.grv.testtask.common.AlertFunctions
 import ru.grv.testtask.domain.entity.BookEntity
 import ru.grv.testtask.domain.entity.ProfileEntity
-import ru.grv.testtask.presentation.book.view.BookView
-import ru.grv.testtask.presentation.profile.BaseController
+import ru.grv.testtask.common.mvp.BaseMvpController
+import ru.grv.testtask.common.ToolbarManager
+import ru.grv.testtask.presentation.book.view.BooksController
 import ru.grv.testtask.presentation.profile.presenter.ProfilePresenter
-import ru.grv.testtask.presentation.profile.view.IProfileController
 import javax.inject.Inject
+import kotlin.collections.ArrayList
 
+const val TOKEN = BOOKS_PROFILE_TOKEN
 
 class ProfileController :
-    BaseController(),
+    BaseMvpController(),
     IProfileController,
     SwipeRefreshLayout.OnRefreshListener,
     View.OnClickListener
 {
     override fun getLayoutId() = R.layout.controller_profile
 
+
     // region Fields
-    //----------------------------------------------------------------------------------------------
+    // =============================================================================================
     private var countReadBook = 0
 
     @Inject
@@ -38,16 +43,14 @@ class ProfileController :
     fun providePresenter(): ProfilePresenter {
         return presenter
     }
-    //----------------------------------------------------------------------------------------------
+    // =============================================================================================
     // endregion Fields
 
 
     // region Lifecycle
     // =============================================================================================
     private fun onPostViewCreated(view: View) {
-        initToolbar()
         configureView(view)
-        setProgressBarVisibility(true)
         presenter.getProfileInfo()
     }
     // =============================================================================================
@@ -55,32 +58,14 @@ class ProfileController :
 
 
     // region private
-    //----------------------------------------------------------------------------------------------
+    // =============================================================================================
     private fun configureView(view: View) {
         view.swipeContainer?.setOnRefreshListener(this)
         view.countOfBooksRead?.setOnClickListener(this)
     }
-
-    private fun initToolbar() {
-        val toolbar = (view?.toolbar as Toolbar)
-        toolbar.title = resources?.getString(R.string.title_profile_screen)
-    }
     // =============================================================================================
     // endregion View
 
-    override fun initializeInjector() {
-        getComponentManager()?.getProfileComponent()?.inject(this)
-    }
-
-    override fun clearInjector() {
-        getComponentManager()?.clearProfileComponent()
-    }
-
-    override fun onCreated() {
-        view?.let {
-            onPostViewCreated(it)
-        }
-    }
 
     override fun updateProfileInfo(entity: ProfileEntity?) {
         view?.swipeContainer?.isRefreshing = false
@@ -103,22 +88,21 @@ class ProfileController :
     }
 
     override fun openActivityBook(bookList: ArrayList<BookEntity>) {
-        val context = applicationContext
-        val intent = Intent(context, BookView::class.java)
-        intent.putExtra(Constants.BOOKS_KEY, bookList)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        context?.startActivity(intent)
+        val bundle = Bundle()
+        bundle.putSerializable(Constants.BOOKS_KEY, bookList)
+        val controller = BooksController(bundle)
+        pushController(controller, DEFAULT_STRING)
     }
 
     override fun showErrorAlert(title: String, message: String?) {
         view?.swipeContainer?.isRefreshing = false
         if (message != null) {
             activity?.let {
-                ru.grv.testtask.AlertFunctions(
+                AlertFunctions(
                     activity = it,
                     title = title,
                     message = message,
-                    buttonsType = ru.grv.testtask.AlertFunctions.BUTTONS.OK,
+                    buttonsType = AlertFunctions.BUTTONS.OK,
                     okButtonResId = R.string.ok
                 ).show()
             }
@@ -138,15 +122,42 @@ class ProfileController :
         presenter.getProfileInfo()
     }
 
-    override fun onClick(v: View?) {
-        when (v) {
+    override fun onClick(view: View?) {
+        when (view) {
             view?.countOfBooksRead -> {
                 if (countReadBook > 0) {
                     presenter.chooseCountReadBook()
                 } else {
-                    resources?.getString(R.string.empty_read_books)?.let { showErrorAlert(title = it) }
+                    resources?.getString(R.string.empty_read_books)?.let {
+                        showErrorAlert(title = it)
+                    }
                 }
             }
         }
     }
+
+
+    // region BaseController overrides
+    // =============================================================================================
+    override fun initializeInjector() {
+        getComponentManager()?.getProfileComponent()?.inject(this)
+    }
+
+    override fun clearInjector() {
+        getComponentManager()?.clearProfileComponent()
+    }
+
+    override fun onCreated() {
+        view?.let {
+            onPostViewCreated(it)
+        }
+    }
+
+    override fun getTitle() = resources?.getString(R.string.title_profile_screen)
+
+    override fun getIconType() = ToolbarManager.IconType.NONE
+
+    override fun initState() = STATE.LOADING
+    // =============================================================================================
+    // endregion BaseController overrides
 }

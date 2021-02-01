@@ -1,18 +1,15 @@
 package ru.grv.testtask.data.repository
 
-import android.accounts.NetworkErrorException
 import android.content.Context
 import io.reactivex.Maybe
 import io.reactivex.Single
-import ru.grv.testtask.Constants
+import ru.grv.testtask.data.Constants
 import ru.grv.testtask.R
 import ru.grv.testtask.data.db.TestTaskDatabase
-import ru.grv.testtask.data.exception.NetworkUnavailableException
 import ru.grv.testtask.data.response.profile.ProfileResponse
 import ru.grv.testtask.domain.entity.*
 import ru.grv.testtask.data.storage.ProfileStorage
 import ru.grv.testtask.domain.repository.IProfileRepository
-import ru.grv.testtask.presentation.profile.view.DATE_FORMAT_SHORT_SERVER
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -23,6 +20,8 @@ class ProfileRepository
     private val db: TestTaskDatabase,
     private val context: Context
 ) : IProfileRepository, BaseRepository(){
+
+    private val sServerShortFormat = SimpleDateFormat(Constants.DATE_FORMAT_SHORT_SERVER, Locale.US)
 
     override fun getProfileInfo(): Maybe<ProfileEntity> {
         return db.profileDao().getProfile()
@@ -41,7 +40,6 @@ class ProfileRepository
                 extractProfileInfoFromResponse(it)
             }
     }
-
 
     override fun writeProfileInfoInDb(entity: ProfileEntity) {
         db.profileDao().deleteProfile()
@@ -63,11 +61,10 @@ class ProfileRepository
     }
 
     private fun getNewFormatDate(date: String): String {
-        val sServerShortFormat = SimpleDateFormat(DATE_FORMAT_SHORT_SERVER, Locale.US)
         sServerShortFormat.timeZone = TimeZone.getTimeZone("Europe/Moscow")
         val dateStrWithTimeZone = sServerShortFormat.parse(date)
         val timeDate = dateStrWithTimeZone.time
         val timelineDateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
-        return timelineDateFormat.format(Date(timeDate))+"г."
+        return "${timelineDateFormat.format(Date(timeDate))} г."
     }
 }

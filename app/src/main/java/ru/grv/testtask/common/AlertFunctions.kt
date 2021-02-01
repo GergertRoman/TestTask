@@ -1,4 +1,4 @@
-package ru.grv.testtask
+package ru.grv.testtask.common
 
 import android.app.Activity
 import android.content.DialogInterface
@@ -9,17 +9,18 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import ru.grv.testtask.R
 
 class AlertFunctions(
-        private val activity: Activity,
-        private val message: String,
-        private val title: String? = "Ошибка",
-        private val buttonsType: BUTTONS? = BUTTONS.OK,
-        private val okButtonResId: Int? = R.string.ok,
-        private val cancelButtonResId: Int? = R.string.cancel,
-        private val okListener: DialogInterface.OnClickListener? = null,
-        private val cancelListener: DialogInterface.OnClickListener? = null,
-        private val canceledOnTouchOutside: Boolean = false) {
+    private val activity: Activity,
+    private val message: String,
+    private val title: String? = "Ошибка",
+    private val buttonsType: BUTTONS? = BUTTONS.OK,
+    private val okButtonResId: Int? = R.string.ok,
+    private val cancelButtonResId: Int? = R.string.cancel,
+    private val okListener: DialogInterface.OnClickListener? = null,
+    private val cancelListener: DialogInterface.OnClickListener? = null,
+    private val canceledOnTouchOutside: Boolean = false) {
 
     enum class BUTTONS {
         OK,
@@ -30,7 +31,7 @@ class AlertFunctions(
         val faceButton = Typeface.createFromAsset(activity.assets, "fonts/Roboto-Medium.ttf")
         val alertDialog = android.app.AlertDialog.Builder(
                 activity,
-                R.style.YDialog
+            R.style.YDialog
         )
         alertDialog.setMessage(message)
             .setTitle(title)

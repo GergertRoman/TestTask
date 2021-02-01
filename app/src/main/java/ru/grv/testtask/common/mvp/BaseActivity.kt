@@ -1,4 +1,4 @@
-package ru.grv.testtask.presentation
+package ru.grv.testtask.common.mvp
 
 import android.os.Bundle
 import android.view.View
@@ -9,20 +9,27 @@ import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.facebook.stetho.Stetho
 import ru.grv.testtask.R
+import ru.grv.testtask.presentation.profile.view.ProfileController
 
 
 class BaseActivity: AppCompatActivity() {
-    private var router: Router? = null
+    lateinit var router: Router
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_base)
         val container = findViewById<View>(R.id.controller_container) as ViewGroup
         router = Conductor.attachRouter(this, container, savedInstanceState)
-        if (!router!!.hasRootController()) {
-            router!!.setRoot(RouterTransaction.with(ProfileController()))
+        if (!router.hasRootController()) {
+            router.setRoot(RouterTransaction.with(ProfileController()))
         }
         initializerStetho()
+    }
+
+    override fun onBackPressed() {
+        if (!router.handleBack()) {
+            super.onBackPressed()
+        }
     }
 
     private fun initializerStetho() {

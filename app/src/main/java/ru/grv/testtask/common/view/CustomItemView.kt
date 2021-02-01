@@ -1,4 +1,4 @@
-package ru.grv.testtask.view
+package ru.grv.testtask.common.view
 
 import android.content.Context
 import android.content.res.TypedArray

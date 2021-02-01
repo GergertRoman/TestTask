@@ -1,10 +1,12 @@
 package ru.grv.testtask.presentation.book.view
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.card_book.view.*
@@ -14,9 +16,11 @@ import ru.grv.testtask.domain.entity.BookEntity
 class BookAdapter: RecyclerView.Adapter<BookAdapter.BookViewHolder>() {
 
     private var items: ArrayList<BookEntity> = arrayListOf()
+    lateinit var context: Context
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookViewHolder {
-        val itemView = LayoutInflater.from(parent.context)
+        this.context = parent.context
+        val itemView = LayoutInflater.from(context)
             .inflate(R.layout.card_book, parent, false)
         return BookViewHolder(itemView)
     }
@@ -29,10 +33,18 @@ class BookAdapter: RecyclerView.Adapter<BookAdapter.BookViewHolder>() {
         holder.nameBook?.text = items[position].nameBook
 
         holder.author?.text = items[position].authors
+
         if (items[position].imageBookUrl.isNotEmpty()) {
-            Picasso.get().load(items[position].imageBookUrl).into(holder.screenBook)
+            Picasso.get()
+                .load(items[position].imageBookUrl)
+                .placeholder(R.drawable.ic_journal)
+                .into(holder.screenBook)
         } else {
-            holder.screenBook?.setImageDrawable(holder.itemView.context.getDrawable(R.drawable.ic_journal))
+            holder.screenBook?.setImageDrawable(
+                ContextCompat.getDrawable(
+                    context,R.drawable.ic_journal
+                )
+            )
         }
     }
 

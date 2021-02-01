@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <FrameLayout
-    android:id="@+id/base_view"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/base_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <FrameLayout
         android:id="@+id/contentContainer"
         android:layout_width="match_parent"
-        android:visibility="visible"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:visibility="visible"/>
 
     <FrameLayout
         android:id="@+id/contentLoading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="gone"
         android:background="@color/black_0.36">
 
         <androidx.core.widget.ContentLoadingProgressBar
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="center"
-            style="?android:attr/progressBarStyleLarge"
-            android:visibility="visible"/>
+            style="?android:attr/progressBarStyleLarge" />
 
     </FrameLayout>
 

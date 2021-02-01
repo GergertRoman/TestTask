@@ -3,9 +3,9 @@ package ru.grv.testtask.data.repository
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
-import ru.grv.testtask.Constants.INTERNAL_BACKEND_ERROR_TYPE
-import ru.grv.testtask.Constants.NETWORK_UNAVAILABLE_ERROR_TYPE
-import ru.grv.testtask.Constants.TOKEN_EXPIRED_TYPE
+import ru.grv.testtask.data.Constants.INTERNAL_BACKEND_ERROR_TYPE
+import ru.grv.testtask.data.Constants.NETWORK_UNAVAILABLE_ERROR_TYPE
+import ru.grv.testtask.data.Constants.TOKEN_EXPIRED_TYPE
 import ru.grv.testtask.data.exception.InternalBackendException
 import ru.grv.testtask.data.exception.NetworkUnavailableException
 import ru.grv.testtask.data.exception.TokenExpiredException
