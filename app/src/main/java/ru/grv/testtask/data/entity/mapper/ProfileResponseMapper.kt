@@ -1,7 +1,5 @@
 package ru.grv.testtask.data.entity.mapper
 
-import android.content.Context
-import ru.grv.testtask.R
 import ru.grv.testtask.data.Constants
 import ru.grv.testtask.data.response.profile.ProfileResponse
 import ru.grv.testtask.domain.entity.ProfileEntity
@@ -13,9 +11,9 @@ class ProfileResponseMapper @Inject constructor() : IProfileResponseMapper {
 
     private val sServerShortFormat = SimpleDateFormat(Constants.DATE_FORMAT_SHORT_SERVER, Locale.US)
 
-    override fun map(data: ProfileResponse, context: Context): ProfileEntity {
+    override fun map(data: ProfileResponse): ProfileEntity {
         val profileResponse = data.data
-        val noData: String = context.getText(R.string.no_data) as String
+        val noData: String = "Нет данных"
         return ProfileEntity(
             birthDate = profileResponse?.birth_date?.let { getNewFormatDate(it) } ?: noData,
             city = profileResponse?.city ?: noData,

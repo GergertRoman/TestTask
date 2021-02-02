@@ -2,6 +2,8 @@ package ru.grv.testtask.di.module
 
 import dagger.Binds
 import dagger.Module
+import ru.grv.testtask.data.entity.mapper.BooksResponseMapper
+import ru.grv.testtask.data.entity.mapper.IBooksResponseMapper
 import ru.grv.testtask.data.entity.mapper.IProfileResponseMapper
 import ru.grv.testtask.data.entity.mapper.ProfileResponseMapper
 import ru.grv.testtask.data.repository.BookRepository
@@ -33,6 +35,9 @@ abstract class ProfileModule {
     abstract fun bindBookRepository(repository: BookRepository): IBookRepository
 
     @Binds
-    abstract fun bindProfileResponseMapper(repository: ProfileResponseMapper): IProfileResponseMapper
+    abstract fun bindProfileResponseMapper(mapper: ProfileResponseMapper): IProfileResponseMapper
+
+    @Binds
+    abstract fun bindBooksResponseMapper(mapper: BooksResponseMapper): IBooksResponseMapper
     // endregion
 }

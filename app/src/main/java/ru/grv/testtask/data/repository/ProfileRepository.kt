@@ -37,7 +37,7 @@ class ProfileRepository
                 if (it.data == null) {
                     definitionError(it.reason)
                 }
-                userResponseMapper.map(it, context)
+                userResponseMapper.map(it)
                 //extractProfileInfoFromResponse(it)
             }
     }
